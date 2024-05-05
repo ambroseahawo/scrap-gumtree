@@ -1,7 +1,7 @@
 import datetime
 import socket
 
-from itemloaders.processors import MapCompose, TakeFirst
+from itemloaders.processors import Join, MapCompose, TakeFirst
 from lxml import html
 from scrapy.item import Field
 from scrapy.linkextractors import LinkExtractor
@@ -34,7 +34,9 @@ class PropertiesSpider(CrawlSpider):
         item_loader.add_xpath("title", "//h1/text()", MapCompose(str.strip, str.title))
         item_loader.add_xpath("location", '//h4[@data-q="ad-location"]/text()', MapCompose(str.strip))
         item_loader.add_xpath("price", '//h3[@data-q="ad-price"]/text()', MapCompose(str.strip))
-        item_loader.add_xpath("images", '//li[contains(@class,"carousel-item")]/img/@src')
+        item_loader.add_xpath(
+            "images", '//li[contains(@class,"carousel-item")]/img/@src', self.process_images_container
+        )
         item_loader.add_xpath(
             "description", '//p[@itemprop="description"]', MapCompose(remove_tags, self.format_paragraph)
         )
@@ -60,6 +62,9 @@ class PropertiesSpider(CrawlSpider):
         item_loader.add_value("date", datetime.datetime.now())
 
         return item_loader.load_item()
+
+    def process_images_container(self, images_container):
+        return ",".join(images_container)
 
     def format_paragraph(self, job_description):
         # Replace multiple spaces with single space
