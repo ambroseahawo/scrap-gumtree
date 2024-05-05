@@ -1,4 +1,6 @@
 from itemloaders.processors import MapCompose, TakeFirst
+from lxml import html
+from scrapy.item import Field
 from scrapy.linkextractors import LinkExtractor
 from scrapy.loader import ItemLoader
 from scrapy.spiders import CrawlSpider, Rule
@@ -14,9 +16,9 @@ class PropertiesSpider(CrawlSpider):
 
     # rules = (Rule(LinkExtractor(allow=r"Items/"), callback="parse_item", follow=True),)
     rules = (
-        Rule(
-            LinkExtractor(restrict_xpaths='//a[@data-q="pagination-forward-page"]')
-        ),  # //a[@data-q="pagination-forward-page"]/@href
+        # Rule(
+        #     LinkExtractor(restrict_xpaths='//a[@data-q="pagination-forward-page"]')
+        # ),  # //a[@data-q="pagination-forward-page"]/@href
         Rule(
             LinkExtractor(restrict_xpaths='//article[@data-q="search-result"]//a'), callback="parse_item"
         ),  # //a[@data-q="search-result-anchor"]/@href
@@ -33,6 +35,18 @@ class PropertiesSpider(CrawlSpider):
         item_loader.add_xpath(
             "description", '//p[@itemprop="description"]', MapCompose(remove_tags, self.format_paragraph)
         )
+        GumtreePropertiesItem.fields["name"] = Field()
+        item_loader.add_value("name", "Sample")
+
+        attributes_container = response.xpath('//div[@data-q="attribute-container"]//dl').getall()
+        for each_attribute in attributes_container:
+            html_selector = html.fromstring(each_attribute)
+            attribute_field = html_selector.xpath("//dt/text()")[0]
+            attribute_value = html_selector.xpath("//dd/text()")[0]
+
+            item_key = self.process_attr_str(attribute_field)
+            GumtreePropertiesItem.fields[item_key] = Field()
+            item_loader.add_value(item_key, attribute_value)
 
         return item_loader.load_item()
 
@@ -45,3 +59,18 @@ class PropertiesSpider(CrawlSpider):
 
         # Return formatted string
         return job_description
+
+    def process_attr_str(self, input_string):
+        # Remove whitespaces
+        input_string = input_string.strip()
+
+        # Convert to lower case
+        input_string = input_string.lower()
+
+        # Join words with underscore
+        input_string = "_".join(input_string.split())
+
+        # Remove non-alphanumeric characters
+        # input_string = "".join(char for char in input_string if char.isalnum())
+
+        return input_string
