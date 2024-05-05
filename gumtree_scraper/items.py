@@ -6,7 +6,7 @@
 from scrapy.item import Field, Item
 
 
-class GumtreeScraperItem(Item):
+class GumtreePropertiesItem(Item):
     # define the fields for your item here like:
     title = Field()
     location = Field()
