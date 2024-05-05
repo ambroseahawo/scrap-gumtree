@@ -1,3 +1,6 @@
+import datetime
+import socket
+
 from itemloaders.processors import MapCompose, TakeFirst
 from lxml import html
 from scrapy.item import Field
@@ -35,8 +38,9 @@ class PropertiesSpider(CrawlSpider):
         item_loader.add_xpath(
             "description", '//p[@itemprop="description"]', MapCompose(remove_tags, self.format_paragraph)
         )
-        GumtreePropertiesItem.fields["name"] = Field()
-        item_loader.add_value("name", "Sample")
+        item_loader.add_xpath(
+            "seller", '//h2[@class="truncate-line seller-rating-block-name"]/text()', MapCompose(str.strip, str.title)
+        )
 
         attributes_container = response.xpath('//div[@data-q="attribute-container"]//dl').getall()
         for each_attribute in attributes_container:
@@ -47,6 +51,13 @@ class PropertiesSpider(CrawlSpider):
             item_key = self.process_attr_str(attribute_field)
             GumtreePropertiesItem.fields[item_key] = Field()
             item_loader.add_value(item_key, attribute_value)
+
+        # Housekeeping fields
+        item_loader.add_value("url", response.url)
+        item_loader.add_value("project", self.settings.get("BOT_NAME"))
+        item_loader.add_value("spider", self.name)
+        item_loader.add_value("server", socket.gethostname())
+        item_loader.add_value("date", datetime.datetime.now())
 
         return item_loader.load_item()
 
