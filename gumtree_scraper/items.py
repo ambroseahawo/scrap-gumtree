@@ -12,9 +12,10 @@ class GumtreePropertiesItem(Item):
     title = Field()
     location = Field()
     price = Field()
-    image_urls = Field()
     description = Field()
     seller = Field()
+    image_urls = Field()
+    images = Field()
 
     # Dynamic fields
 

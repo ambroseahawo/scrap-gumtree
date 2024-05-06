@@ -63,7 +63,7 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    "gumtree_scraper.pipelines.CustomImagePipeline": 1,
+    "scrapy.pipelines.images.ImagesPipeline": 1,
     "gumtree_scraper.pipelines.GumtreeScraperPipeline": 300,
 }
 

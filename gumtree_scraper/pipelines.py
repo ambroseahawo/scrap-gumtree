@@ -28,4 +28,6 @@ class CustomImagePipeline(ImagesPipeline):
                 yield scrapy.Request(url)
 
 
-# custom image pipeline;- https://gist.github.com/farhadmpr/12ba6a3aa058138ec5c026a1a0f8eebd
+# custom image pipeline;-
+# https://gist.github.com/farhadmpr/12ba6a3aa058138ec5c026a1a0f8eebd
+# https://docs.scrapy.org/en/latest/topics/media-pipeline.html?highlight=image#:~:text=file%20is%20expired.-,Thumbnail%20generation%20for%20images,the%20values%20are%20their%20dimensions.

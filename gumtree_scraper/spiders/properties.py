@@ -65,7 +65,10 @@ class PropertiesSpider(CrawlSpider):
         return item_loader.load_item()
 
     def process_images_container(self, images_container):
-        return ",".join(images_container)
+        # return ",".join(images_container)
+        container = []
+        container.append(images_container)
+        return container
 
     def format_paragraph(self, job_description):
         # Replace multiple spaces with single space
