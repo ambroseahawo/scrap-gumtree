@@ -69,11 +69,14 @@ DOWNLOADER_MIDDLEWARES = {
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
 EXTENSIONS = {
     "scrapy.extensions.telnet.TelnetConsole": None,
-    "gumtree_scraper.extensions.SpiderOpenCloseLogging": 100,
+    "gumtree_scraper.extensions.SetLoggingFileTerminal": 100,
+    "gumtree_scraper.extensions.Latencies": 300,
+    "gumtree_scraper.extensions.TrackItemsScraped": 300,
 }
 
 MYEXT_ENABLED = True
 MYEXT_ITEMCOUNT = 10
+LATENCIES_INTERVAL = 5.0
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
