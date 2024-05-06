@@ -3,8 +3,9 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 
-
-import hashlib
+# Modifying or storing Items—domain-specific, may be
+# reused across projects.
+# Write an Item Pipeline.
 
 import scrapy
 

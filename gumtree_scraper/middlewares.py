@@ -3,10 +3,24 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-from scrapy import signals
+import scrapy
 
 # useful for handling different item types with a single interface
-from itemadapter import is_item, ItemAdapter
+from itemadapter import ItemAdapter, is_item
+from scrapy import signals
+from w3lib.html import remove_comments
+
+# Modifying or dropping Requests/Responses—domain-
+# specific, may be reused across projects.
+# Write a spider middleware.
+
+# Executing Requests/Responses—generic, for example,
+# to support some custom login scheme or a special way to
+# handle cookies.
+# Write a downloader
+# middleware.
+
+# All other problems. Write an extension.
 
 
 class GumtreeScraperSpiderMiddleware:
@@ -82,6 +96,8 @@ class GumtreeScraperDownloaderMiddleware:
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.
+        if response.body:
+            response = response.replace(body=remove_comments(response.body))
 
         # Must either;
         # - return a Response object
@@ -97,7 +113,7 @@ class GumtreeScraperDownloaderMiddleware:
         # - return None: continue processing this exception
         # - return a Response object: stops process_exception() chain
         # - return a Request object: stops process_exception() chain
-        pass
+        return scrapy.http.Response(request.url)
 
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)
