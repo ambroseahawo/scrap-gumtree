@@ -8,6 +8,7 @@ import scrapy
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter, is_item
 from scrapy import signals
+from scrapy.http.response.text import TextResponse
 from w3lib.html import remove_comments
 
 # Modifying or dropping Requests/Responses—domain-
@@ -96,8 +97,9 @@ class GumtreeScraperDownloaderMiddleware:
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.
-        if response.body:
-            response = response.replace(body=remove_comments(response.body))
+        if isinstance(response, TextResponse):
+            if response.body:
+                response = response.replace(body=remove_comments(response.body))
 
         # Must either;
         # - return a Response object
@@ -113,6 +115,7 @@ class GumtreeScraperDownloaderMiddleware:
         # - return None: continue processing this exception
         # - return a Response object: stops process_exception() chain
         # - return a Request object: stops process_exception() chain
+        # pass
         return scrapy.http.Response(request.url)
 
     def spider_opened(self, spider):
