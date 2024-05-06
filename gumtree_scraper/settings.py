@@ -16,10 +16,10 @@ BOT_NAME = "gumtree_scraper"
 SPIDER_MODULES = ["gumtree_scraper.spiders"]
 NEWSPIDER_MODULE = "gumtree_scraper.spiders"
 
-ITEMS_FOLDER_NAME = "items"
 LOGS_FOLDER_NAME = "logs"
+ITEMS_FOLDER_NAME = "items"
 
-setup_project_folders()
+setup_project_folders(LOGS_FOLDER_NAME, ITEMS_FOLDER_NAME)
 
 LOG_ENABLED = True
 LOG_FILE = "{0}/{1}_{2}.log".format(LOGS_FOLDER_NAME, BOT_NAME, datetime.datetime.today().strftime("%Y-%m-%dT%H:%M:%S"))
