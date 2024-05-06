@@ -6,18 +6,37 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import datetime
+import logging
+
+from helpers import setup_project_folders
 
 BOT_NAME = "gumtree_scraper"
 
 SPIDER_MODULES = ["gumtree_scraper.spiders"]
 NEWSPIDER_MODULE = "gumtree_scraper.spiders"
 
+ITEMS_FOLDER_NAME = "items"
+LOGS_FOLDER_NAME = "logs"
+
+setup_project_folders()
+
+LOG_ENABLED = True
+LOG_FILE = "{0}/{1}_{2}.log".format(LOGS_FOLDER_NAME, BOT_NAME, datetime.datetime.today().strftime("%Y-%m-%dT%H:%M:%S"))
+LOG_LEVEL = "DEBUG"
+
+# enable logging on both log_file and terminal
+logging.basicConfig(
+    level=logging.DEBUG, format="[%(asctime)s] %(name)s %(levelname)s:%(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+)
+logger = logging.getLogger(__name__)
+logging.getLogger().addHandler(logging.StreamHandler())
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = "gumtree_scraper (+http://www.yourdomain.com)"
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 # CONCURRENT_REQUESTS = 32
@@ -56,9 +75,13 @@ DOWNLOADER_MIDDLEWARES = {
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
-# EXTENSIONS = {
-#    "scrapy.extensions.telnet.TelnetConsole": None,
-# }
+EXTENSIONS = {
+    "scrapy.extensions.telnet.TelnetConsole": None,
+    "gumtree_scraper.extensions.SpiderOpenCloseLogging": 100,
+}
+
+MYEXT_ENABLED = True
+MYEXT_ITEMCOUNT = 10
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
