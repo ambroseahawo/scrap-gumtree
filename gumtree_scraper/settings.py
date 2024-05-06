@@ -7,7 +7,6 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 import datetime
-import logging
 
 from helpers import setup_project_folders
 
@@ -24,13 +23,6 @@ setup_project_folders(LOGS_FOLDER_NAME, ITEMS_FOLDER_NAME)
 LOG_ENABLED = True
 LOG_FILE = "{0}/{1}_{2}.log".format(LOGS_FOLDER_NAME, BOT_NAME, datetime.datetime.today().strftime("%Y-%m-%dT%H:%M:%S"))
 LOG_LEVEL = "DEBUG"
-
-# enable logging on both log_file and terminal
-logging.basicConfig(
-    level=logging.DEBUG, format="[%(asctime)s] %(name)s %(levelname)s:%(message)s", datefmt="%Y-%m-%d %H:%M:%S"
-)
-logger = logging.getLogger(__name__)
-logging.getLogger().addHandler(logging.StreamHandler())
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = "gumtree_scraper (+http://www.yourdomain.com)"
@@ -87,6 +79,7 @@ MYEXT_ITEMCOUNT = 10
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     "scrapy.pipelines.images.ImagesPipeline": 1,
+    "gumtree_scraper.pipelines.PostTidyItems": 100,
     "gumtree_scraper.pipelines.GumtreeScraperPipeline": 300,
 }
 

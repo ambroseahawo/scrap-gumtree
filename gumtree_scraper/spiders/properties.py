@@ -29,14 +29,12 @@ class PropertiesSpider(CrawlSpider):
 
     def parse_item(self, response):
         item_loader = ItemLoader(item=GumtreePropertiesItem(), response=response)
-        item_loader.default_output_processor = TakeFirst()
+        # item_loader.default_output_processor = TakeFirst()
 
         item_loader.add_xpath("title", "//h1/text()", MapCompose(str.strip, str.title))
         item_loader.add_xpath("location", '//h4[@data-q="ad-location"]/text()', MapCompose(str.strip))
         item_loader.add_xpath("price", '//h3[@data-q="ad-price"]/text()', MapCompose(str.strip))
-        item_loader.add_xpath(
-            "image_urls", '//li[contains(@class,"carousel-item")]/img/@src', self.process_images_container
-        )
+        item_loader.add_xpath("image_urls", '//li[contains(@class,"carousel-item")]/img/@src')
         item_loader.add_xpath(
             "description", '//p[@itemprop="description"]', MapCompose(remove_tags, self.format_paragraph)
         )

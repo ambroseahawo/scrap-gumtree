@@ -14,6 +14,12 @@ class SpiderOpenCloseLogging:
     @classmethod
     def from_crawler(cls, crawler):
         # settings = crawler.settings
+        # enable logging on both log_file and terminal
+        logging.basicConfig(
+            level=logging.DEBUG, format="[%(asctime)s] %(name)s %(levelname)s:%(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+        )
+        # logger = logging.getLogger(__name__)
+        logging.getLogger().addHandler(logging.StreamHandler())
         # first check if the extension should be enabled and raise
         # NotConfigured otherwise
         if not crawler.settings.getbool("MYEXT_ENABLED"):

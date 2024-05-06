@@ -7,12 +7,19 @@
 # reused across projects.
 # Write an Item Pipeline.
 
+from datetime import datetime
+
 import scrapy
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 from scrapy.pipelines.images import ImagesPipeline
-from scrapy.utils.python import to_bytes
+
+
+class PostTidyItems(object):
+    def process_item(self, item, spider):
+        item["date"] = list(map(datetime.isoformat, item["date"]))
+        return item
 
 
 class GumtreeScraperPipeline:
