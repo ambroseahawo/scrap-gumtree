@@ -82,6 +82,7 @@ class Latencies:
         cs.connect(self._request_scheduled, signal=signals.request_scheduled)
         cs.connect(self._response_received, signal=signals.response_received)
         cs.connect(self._item_scraped, signal=signals.item_scraped)
+        cs.connect(self._item_dropped, signal=signals.item_dropped)
 
         self.latency, self.proc_latency, self.items = 0, 0, 0
 
@@ -103,6 +104,15 @@ class Latencies:
         self.latency += time() - response.meta["schedule_time"]
         self.proc_latency += time() - response.meta["received_time"]
         self.items += 1
+
+    def _item_dropped(self, item, response, exception, spider):
+        stats = spider.crawler.stats.get_stats()
+        try:
+            item_count = int(stats["item_scraped_count"])
+            if item_count:
+                item_count -= 1
+        except:
+            pass
 
     def _log(self, spider):
         irate = float(self.items) / self.interval
