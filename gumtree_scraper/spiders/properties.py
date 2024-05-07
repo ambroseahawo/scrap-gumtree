@@ -31,7 +31,7 @@ class PropertiesSpider(CrawlSpider):
         item_loader = ItemLoader(item=GumtreePropertiesItem(), response=response)
         # item_loader.default_output_processor = TakeFirst()
 
-        item_loader.add_xpath("title", "//h1/text()", MapCompose(str.strip, str.title))
+        item_loader.add_xpath("title", "//h1[1]/text()", MapCompose(str.strip, str.title))
         item_loader.add_xpath("location", '//h4[@data-q="ad-location"]/text()', MapCompose(str.strip))
         item_loader.add_xpath("price", '//h3[@data-q="ad-price"]/text()', MapCompose(str.strip))
         item_loader.add_xpath("image_urls", '//li[contains(@class,"carousel-item")]/img/@src')
@@ -49,7 +49,7 @@ class PropertiesSpider(CrawlSpider):
             attribute_value = html_selector.xpath("//dd/text()")[0]
 
             item_key = self.process_attr_str(attribute_field)
-            GumtreePropertiesItem.fields[item_key] = Field()
+            GumtreePropertiesItem.fields[item_key] = Field(output_processor=TakeFirst())
             item_loader.add_value(item_key, attribute_value)
 
         # Housekeeping fields
@@ -57,7 +57,8 @@ class PropertiesSpider(CrawlSpider):
         item_loader.add_value("project", self.settings.get("BOT_NAME"))
         item_loader.add_value("spider", self.name)
         item_loader.add_value("server", socket.gethostname())
-        item_loader.add_value("date", datetime.now())
+        item_loader.add_value("date", datetime.now().isoformat())
+        # item_loader.add_value("date", datetime.now())
         # item_loader.add_value("date", datetime.now(timezone.utc)) timezone time
 
         return item_loader.load_item()

@@ -17,11 +17,9 @@ from scrapy.exceptions import DropItem
 from scrapy.pipelines.images import ImagesPipeline
 
 
-class PostTidyItems(object):
+class PostProcessItems(object):
     def process_item(self, item, spider):
         item["date"] = list(map(datetime.isoformat, item["date"]))
-        if "https://www.gumtree.com/p/property-to-share/flat-share-in-hayes/1478916269" in item["url"]:
-            raise DropItem("Duplicate item found!")
         return item
 
 
