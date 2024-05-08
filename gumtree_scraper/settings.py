@@ -83,8 +83,9 @@ LATENCIES_INTERVAL = 5.0
 ITEM_PIPELINES = {
     "scrapy.pipelines.images.ImagesPipeline": 1,
     # "gumtree_scraper.pipelines.PostTidyItems": 100,
-    "gumtree_scraper.pipelines.GumtreeScraperPipeline": 300,
+    "gumtree_scraper.pipelines.PostgresWriter": 300,
 }
+POSTGRES_PIPELINE_URL = "postgresql://postgres:%23postgress%232023@localhost:5432/properties"
 
 IMAGES_STORE = "images"
 IMAGES_THUMBS = {"small": (30, 30)}
