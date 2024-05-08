@@ -76,16 +76,18 @@ EXTENSIONS = {
 
 MYEXT_ENABLED = True
 MYEXT_ITEMCOUNT = 10
-LATENCIES_INTERVAL = 5.0
+LATENCIES_INTERVAL = 1.0
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     "scrapy.pipelines.images.ImagesPipeline": 1,
-    # "gumtree_scraper.pipelines.PostTidyItems": 100,
     "gumtree_scraper.pipelines.PostgresWriter": 300,
+    # "gumtree_scraper.pipelines.GeoPipeline": 400,
 }
+
 POSTGRES_PIPELINE_URL = "postgresql://postgres:%23postgress%232023@localhost:5432/properties"
+# REDIS_PIPELINE_URL = "redis://redis:6379"
 
 IMAGES_STORE = "images"
 IMAGES_THUMBS = {"small": (30, 30)}
