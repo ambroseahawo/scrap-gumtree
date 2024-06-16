@@ -78,9 +78,9 @@ EXTENSIONS = {
     # "gumtree_scraper.extensions.TrackItemsScraped": 300,
 }
 
-MYEXT_ENABLED = True
-MYEXT_ITEMCOUNT = 10
-LATENCIES_INTERVAL = 1.0
+TRACKITEMSCRAPED_ENABLED = True
+TRACKITEMSCRAPED_ITEMCOUNT = 10
+LATENCIES_INTERVAL = 5.0
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html

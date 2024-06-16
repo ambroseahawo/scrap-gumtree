@@ -34,11 +34,11 @@ class TrackItemsScraped:
     def from_crawler(cls, crawler):
         # first check if the extension should be enabled and raise
         # NotConfigured otherwise
-        if not crawler.settings.getbool("MYEXT_ENABLED"):
+        if not crawler.settings.getbool("TRACKITEMSCRAPED_ENABLED"):
             raise NotConfigured
 
         # get the number of items from settings
-        item_count = crawler.settings.getint("MYEXT_ITEMCOUNT", 100)
+        item_count = crawler.settings.getint("TRACKITEMSCRAPED_ITEMCOUNT", 100)
 
         # instantiate the extension object
         ext = cls(item_count)
