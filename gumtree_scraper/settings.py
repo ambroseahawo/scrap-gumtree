@@ -7,9 +7,13 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 import datetime
+import os
+
+import dotenv
 
 from helpers import setup_project_folders
 
+dotenv.load_dotenv(override=True)
 BOT_NAME = "gumtree_scraper"
 
 SPIDER_MODULES = ["gumtree_scraper.spiders"]
@@ -86,7 +90,21 @@ ITEM_PIPELINES = {
     # "gumtree_scraper.pipelines.GeoPipeline": 400,
 }
 
-POSTGRES_PIPELINE_URL = "postgresql://postgres:%23postgress%232023@localhost:5432/properties"
+# postgres db settings, default port 5432
+DB_HOSTNAME = os.getenv("DB_HOSTNAME")
+DB_USERNAME = os.getenv("DB_USERNAME")
+DB_PASSWORD = os.getenv("DB_PASSWORD")  # your password
+DB_NAME = os.getenv("DB_NAME")
+# connection url
+POSTGRES_PIPELINE_URL = f"postgresql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOSTNAME}:5432/{DB_NAME}"
+# connection json
+POSTGRES_CONNECTION_SETTINGS = {
+    "host": DB_HOSTNAME,
+    "user": DB_USERNAME,
+    "password": DB_PASSWORD,
+    "database": DB_NAME,
+}
+
 # REDIS_PIPELINE_URL = "redis://redis:6379"
 
 IMAGES_STORE = "images"
