@@ -9,11 +9,8 @@ def setup_project_folders(logs_folder_name, items_folder_name):
     # fmt: off
     try:os.mkdir(str(logs_folder_name))
     except:pass
-    
-    try:os.mkdir(str(items_folder_name))
-    except:pass
     # fmt: on
 
 
 if __name__ == "__main__":
-    setup_project_folders("logs", "items")
+    setup_project_folders("logs")
