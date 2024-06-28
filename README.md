@@ -1,6 +1,6 @@
 # scrap-gumtree
 
-This project involves extensive scraping of [Gumtree Listings](https://www.gumtree.com/)
+This project involves extensive scraping of [Gumtree Listings](https://www.gumtree.com/flats-houses/uk/london)
 
 ## Task Description
 
