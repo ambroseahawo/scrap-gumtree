@@ -1,14 +1,17 @@
 """Scrapy spider for scraping property listings from Gumtree (flats/houses, UK)."""
 
+import re
 import socket
 from datetime import datetime
+from urllib.parse import urlparse, urlunparse
 
 from itemloaders.processors import MapCompose, TakeFirst
 from lxml import html
+from scrapy import Request
 from scrapy.item import Field
 from scrapy.linkextractors import LinkExtractor
 from scrapy.loader import ItemLoader
-from scrapy.spiders import CrawlSpider, Rule
+from scrapy.spiders import CrawlSpider
 from w3lib.html import remove_tags
 
 from gumtree_scraper.items import GumtreePropertiesItem
@@ -17,23 +20,45 @@ from gumtree_scraper.items import GumtreePropertiesItem
 class PropertiesSpider(CrawlSpider):
     """Crawls Gumtree listing pages, follows pagination, and extracts ad items."""
 
-    name = "properties"
+    name = "properties-v2"
     allowed_domains = ["gumtree.com"]
-    start_urls = ["https://www.gumtree.com/flats-houses/uk/london" + (f"/page{i}" if i > 1 else "") for i in range(1, 51)]
+    start_urls = ["https://www.gumtree.com/flats-houses/uk/london"]
 
-    # rules = (Rule(LinkExtractor(allow=r"Items/"), callback="parse_item", follow=True),)
-    rules = (
-        # Rule(
-        #     LinkExtractor(restrict_xpaths='//a[@data-q="pagination-forward-page"]')
-        # ),  # //a[@data-q="pagination-forward-page"]/@href
-        Rule(
-            LinkExtractor(restrict_xpaths='//article[@data-q="search-result"]//a'), callback="parse_item"
-        ),  # //a[@data-q="search-result-anchor"]/@href
-    )
+    rules = ()  # No rules; listing pages and pagination handled in parse_listing
+
+    max_page = 50  # Stop after this page to avoid unbounded crawl
+
+    item_link_extractor = LinkExtractor(restrict_xpaths='//article[@data-q="search-result"]//a')
+
+    def start_requests(self):
+        """Send start URLs to parse_listing so we never override CrawlSpider.parse."""
+        for url in self.start_urls:
+            yield Request(url, callback=self.parse_listing)
+
+    def parse_listing(self, response):
+        """Handle a listing page: yield item requests and the next page request."""
+        for link in self.item_link_extractor.extract_links(response):
+            yield Request(link.url, callback=self.parse_item)
+        next_url = self.next_page_url(response.url)
+        if next_url is not None:
+            yield Request(next_url, callback=self.parse_listing)
+
+    def next_page_url(self, url):
+        """Build next listing page URL (e.g. .../london -> .../london/page2). Returns None if past max_page."""
+        parsed = urlparse(url)
+        path = parsed.path.rstrip("/")
+        match = re.search(r"/page(\d+)$", path)
+        if match:
+            page = int(match.group(1))
+            if page >= self.max_page:
+                return None
+            next_path = path[: match.start()] + f"/page{page + 1}"
+        else:
+            next_path = path + "/page2"
+        return urlunparse((parsed.scheme, parsed.netloc, next_path, "", parsed.query or "", parsed.fragment))
 
     def parse_item(self, response):
         """Extract a single property ad (title, price, location, description, attributes) into an item."""
-
         item_loader = ItemLoader(item=GumtreePropertiesItem(), response=response)
         # item_loader.default_output_processor = TakeFirst()
 
