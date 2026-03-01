@@ -1,0 +1,6 @@
+[MASTER]
+disable=
+    abstract-method,
+    broad-exception-caught,
+    line-too-long,
+    useless-super-delegation
